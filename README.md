@@ -4,7 +4,7 @@
 
 A clean-room public reference edition of a cloud-cost analytics product: turn detailed cost records into a reconciled daily model, preserve the meaning of each cost basis, and make reporting periods explicit when the source is late.
 
-**Start here:** run the offline demo, inspect its SQL and tests, then follow the Power BI build guide. Everything shipped here was authored for this public edition. All demo values, resource labels and dates are invented. No private repository history, corporate exports, screenshots or configured reports are included.
+**Start here:** run the offline demo, inspect its SQL and tests, then follow the Power BI build guide. All executable demo values, resource labels and dates are invented. Code and documentation were authored for this public edition. Two separately labeled, owner-authorized redacted historical images provide visual context. No private repository history, corporate exports, unredacted screenshots or configured reports are included.
 
 ## Problem and product approach
 
@@ -71,6 +71,18 @@ All **29 offline contract tests passed on 2026-09-12**. The SQL, fixture, Python
 
 Illustrative design specification using the public demo values, **not a Power BI runtime screenshot**. The two snapshots expose a month-boundary scenario: on March 1 the source is complete only through February 28, so March MTD is unavailable and LFM is February. The later snapshot makes March 1–3 available. [Product rationale](docs/product-design.md) explains the page and interaction decisions.
 
+## Redacted historical visual references
+
+These **AI-edited historical references** show the product layout. Branding and internal names are covered; the owner requested retaining the displayed aggregates. These figures are **not synthetic demo results**, and the edited images are not pixel-exact or evidence of Power BI validation. [Provenance and limits](docs/visual-references.md).
+
+![P01 overview: redacted, AI-edited historical visual reference](assets/p01-overview-redacted.png)
+
+P01: overview, current/comparable cost, trend, concentration and coverage context.
+
+![P02 concentration: redacted, AI-edited historical visual reference](assets/p02-concentration-redacted.png)
+
+P02: ranked concentration and signed contribution to change.
+
 ## Repository map
 
 ```text
@@ -80,7 +92,7 @@ tests/                      Executable behavior and corruption tests
 examples/                   Invented input, CSV model tables, expected results
 powerbi/                    Source-level M/DAX and Desktop build instructions
 docs/                       Architecture, decisions, evidence, validation, limits
-assets/                     Original synthetic wireframe
+assets/                     Synthetic wireframe and redacted historical references
 scripts/check_publication.py Artifact, link and export consistency checks
 .github/                    Pull-request checks and human review template
 ```
@@ -89,7 +101,7 @@ scripts/check_publication.py Artifact, link and export consistency checks
 
 This is a deliberately smaller public reconstruction, not a release of a corporate implementation. No cloud connector, incremental refresh, orchestration, access-control enforcement, Service deployment or production performance is validated. Quantity is additive only within a unit; currencies are never combined. The demo uses integer EUR cents and milli-units; real billing precision needs an approved decimal contract before adaptation. It is not a full FOCUS implementation or certified FinOps solution.
 
-Changes are proposed through a PR. **Human review is required before merging to `main`; auto-merge must remain off.** A PR in a public repository is itself public, so only the newly authored allowlisted files belong in it. [Publication policy](docs/publication.md) specifies the review boundary.
+Changes are proposed through a PR. **Human review is required before merging to `main`; auto-merge must remain off.** A PR in a public repository is itself public, so only allowlisted public files and the explicitly reviewed redacted images belong in it. [Publication policy](docs/publication.md) specifies the review boundary.
 
 ## License
 

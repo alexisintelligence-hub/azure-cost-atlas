@@ -9,11 +9,12 @@
 | Semantic and Power BI integration | DAX, M, CSV tables and build instructions | Source-level example; engine validation pending |
 | Databricks integration | Portable query and environment adaptation instructions | Design / SQL source; cluster execution pending |
 | UX and information architecture | Newly authored product brief and wireframe | Design evidence; not a production screenshot or usability study |
+| Historical product visuals | [Two redacted, AI-edited references](visual-references.md) | Visual context only; retained aggregates are not verified results |
 | Historical scale and production results | No approved public execution receipt included | Not asserted |
 | AI assistance in this reconstruction | Development process of this public edition | Process statement only |
 | Runtime AI | No implementation exists in this edition | Not claimed |
 
-Author-provided context was used only to identify design themes. A historical summary or profile statement is not an authorized execution receipt. Different snapshots cannot be substituted for each other to establish a scale figure. No corporate row counts, financial totals, benchmark timings, screenshots, identifiers or operational artifacts from those files are copied into this repository.
+Author-provided context was used only to identify design themes. A historical summary or profile statement is not an authorized execution receipt. Different snapshots cannot be substituted for each other to establish a scale figure. No corporate row counts, benchmark timings, identifiers or underlying operational artifacts from those files are copied. A later explicit owner request authorized two redacted screenshot derivatives retaining displayed aggregates; their [provenance and limits](visual-references.md) are separate from executable evidence.
 
 To add a historical quantitative claim later, obtain both permission to publish the exact aggregate and a sanitized evidence record that identifies the measurement date, snapshot, count definition, source and analytical grain, filters, query or method, validation status and limitations. Never attach a private log or configured report as a shortcut. Public demo measurements do not validate historical scale or business impact.
 

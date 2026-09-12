@@ -4,7 +4,7 @@
 
 The installed-app inventory identified Power BI Desktop with no running window. The attempt to launch a new blank instance through Windows Computer Use was rejected with: `Computer Use was not approved to use Power BI Desktop`. No alternate launch or control mechanism was used to bypass that restriction.
 
-This is an access blocker, not an observed model or DAX failure. Power BI Desktop version could not be verified. No CSV import, model construction, measure evaluation, visual smoke, PBIX save, close or clean reopen was performed. No PBIX or application screenshot was published. The offline results below do not establish a Desktop PASS.
+This is an access blocker, not an observed model or DAX failure. Power BI Desktop version could not be verified. No CSV import, model construction, measure evaluation, visual smoke, PBIX save, close or clean reopen was performed. No PBIX or application screenshot was published during that attempt. Subsequently added [redacted historical images](visual-references.md) do not validate this synthetic edition. The offline results below do not establish a Desktop PASS.
 
 All requested Desktop scenarios remain **NOT RUN**: separate Billing/Effective/List; MTD; LFM; delayed-snapshot month rollover; manual historical month; missing history as BLANK; covered zero activity as zero; single/no/multiple snapshot selection; resource filtering; signed credits; expected-results equality; and persistence of relationships, measures, filters, values and selected snapshot after clean reopen.
 
@@ -22,7 +22,7 @@ python scripts/check_publication.py
 
 The tests check fixed expected MTD values for three independent bases; snapshot isolation; MTD and LFM at month rollover; historical and future reference months; leap-year comparison clamping; missing history; zero-activity received days; missing coverage; resource filtering; retained negative credits; duplicate keys; unknown dimensions; null and fractional-cent values; unit mismatch; currency isolation; and corruption that removes, duplicates or changes analytical rows. Offsetting errors cannot hide behind a correct grand total.
 
-The publication checker verifies the exact allowed file set, rejects binary/private artifact extensions and common secret-like strings, validates relative Markdown links, and regenerates examples for byte equality. It is a bounded automated check, not a guarantee against every possible sensitive string. The first-publication review must also inspect the entire diff.
+The publication checker verifies the exact allowed file set, rejects unapproved binary/private artifact extensions and common secret-like text strings, checks exact hashes of the two reviewed PNG exceptions, validates relative Markdown links, and regenerates examples for byte equality. It is a bounded automated check, not a guarantee against every possible sensitive string. The first-publication review must also inspect the entire diff.
 
 ## Pending engine and product gates
 
