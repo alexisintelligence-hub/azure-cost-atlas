@@ -1,0 +1,19 @@
+{
+  "kind": "synthetic-offline-run",
+  "source_rows": 476,
+  "analytical_rows": 357,
+  "reconciliation_mismatches": 0,
+  "snapshot": "DEMO-S2",
+  "current_window": {
+    "start": "2025-03-01",
+    "end": "2025-03-03",
+    "available": true
+  },
+  "previous_window": {
+    "start": "2025-02-01",
+    "end": "2025-02-03"
+  },
+  "billing_current_cents": 14190,
+  "billing_previous_cents": 14190,
+  "billing_variance_cents": 0
+}

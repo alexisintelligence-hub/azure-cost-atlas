@@ -1,0 +1,10 @@
+work/
+__pycache__/
+*.pyc
+.venv/
+.env*
+*.pbix
+*.pbit
+*.abf
+*.parquet
+*.log

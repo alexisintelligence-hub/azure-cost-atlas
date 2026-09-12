@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="770" viewBox="0 0 1200 770" role="img" aria-labelledby="title desc">
+<title id="title">Azure Cost Atlas — synthetic product wireframe</title>
+<desc id="desc">Overview with March 1 to 3 synthetic Billing cost of 141.90 EUR, identical prior comparable cost and zero variance. Coverage and snapshot are explicit. Service costs: Compute 62.70, Storage 36.60 and Network 42.60 EUR.</desc>
+<rect width="1200" height="770" fill="#f3f6fa"/>
+<rect width="240" height="770" fill="#112c40"/>
+<g font-family="Arial, sans-serif">
+<text x="28" y="54" font-size="12" fill="#8fd6c3" letter-spacing="2">PORTFOLIO / FINOPS</text>
+<text x="28" y="93" font-size="26" font-weight="bold" fill="white">Azure Cost Atlas</text>
+<text x="28" y="119" font-size="13" fill="#bbcad5">Synthetic reference edition</text>
+<rect x="16" y="164" width="208" height="46" rx="8" fill="#255166"/>
+<g font-size="15" fill="#ccdae4">
+<text x="30" y="193" fill="white" font-weight="bold">01  Overview</text>
+<text x="30" y="246">02  Concentration &amp; change</text>
+<text x="30" y="299">03  Applications</text>
+<text x="30" y="352">04  Cloud composition</text>
+<text x="30" y="405">05  Billing &amp; price context</text>
+</g>
+<text x="28" y="679" font-size="12" fill="#bbcad5">Original design specification</text>
+<text x="28" y="701" font-size="12" fill="#bbcad5">Not a Power BI runtime capture</text>
+<text x="276" y="53" font-size="12" fill="#526577" letter-spacing="1.8">01 / OVERVIEW</text>
+<text x="276" y="93" font-size="31" fill="#122e42" font-weight="bold">Cost, with its context intact.</text>
+<text x="276" y="123" font-size="15" fill="#526577">March 1–3, 2025 compared with February 1–3, 2025</text>
+<rect x="276" y="151" width="886" height="50" rx="8" fill="#deeee8"/>
+<text x="292" y="181" font-size="13" fill="#205b4d">DEMO-S2  ·  As of Mar 4  ·  Complete through Mar 3  ·  3/3 days received  ·  Reconciled offline</text>
+<g fill="white" stroke="#d9e2e9">
+<rect x="276" y="219" width="200" height="44" rx="6"/><rect x="488" y="219" width="212" height="44" rx="6"/>
+<rect x="712" y="219" width="210" height="44" rx="6"/><rect x="934" y="219" width="228" height="44" rx="6"/>
+</g>
+<g fill="#294658" font-size="14"><text x="290" y="247">Period: MTD</text><text x="502" y="247">Month: Automatic</text><text x="726" y="247">Basis: Billing</text><text x="948" y="247">Currency: EUR</text></g>
+<g fill="white" stroke="#d9e2e9"><rect x="276" y="285" width="282" height="134" rx="10"/><rect x="578" y="285" width="282" height="134" rx="10"/><rect x="880" y="285" width="282" height="134" rx="10"/></g>
+<g fill="#526577" font-size="14"><text x="296" y="316">CURRENT BILLING</text><text x="598" y="316">COMPARABLE BILLING</text><text x="900" y="316">VARIANCE</text></g>
+<g fill="#122e42" font-size="36" font-weight="bold"><text x="296" y="364">€141.90</text><text x="598" y="364">€141.90</text><text x="900" y="364">€0.00</text></g>
+<g fill="#526577" font-size="13"><text x="296" y="394">Available synthetic window</text><text x="598" y="394">Same elapsed days, prior month</text><text x="900" y="394">0.00% · both windows covered</text></g>
+<rect x="276" y="441" width="526" height="265" rx="10" fill="white" stroke="#d9e2e9"/>
+<text x="296" y="477" font-size="18" fill="#122e42" font-weight="bold">Where does the cost sit?</text>
+<text x="296" y="501" font-size="13" fill="#526577">Billing by service · same snapshot and period</text>
+<g font-size="14" fill="#294658"><text x="296" y="543">Compute</text><text x="296" y="599">Network</text><text x="296" y="655">Storage</text></g>
+<g fill="#2b8976"><rect x="388" y="525" width="285" height="25" rx="3"/><rect x="388" y="581" width="194" height="25" rx="3"/><rect x="388" y="637" width="166" height="25" rx="3"/></g>
+<g fill="#294658" font-size="14"><text x="694" y="544">€62.70</text><text x="694" y="600">€42.60</text><text x="694" y="656">€36.60</text></g>
+<rect x="822" y="441" width="340" height="265" rx="10" fill="#e8eef4"/>
+<text x="842" y="477" font-size="18" fill="#122e42" font-weight="bold">The month-boundary test</text>
+<g font-size="14" fill="#3b5468"><text x="842" y="514">Earlier snapshot: DEMO-S1</text><text x="842" y="541">As of Mar 1, received through Feb 28.</text><text x="842" y="580" font-weight="bold">March MTD → Unavailable</text><text x="842" y="610">Last full month → February</text><text x="842" y="650">Missing coverage is not zero cost.</text><text x="842" y="677">Keep the source cutoff visible.</text></g>
+<text x="276" y="741" font-size="12" fill="#526577">All values are invented and reproducible. Cost bases are separate readings; differences are not automatically savings.</text>
+</g></svg>

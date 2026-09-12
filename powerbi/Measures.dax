@@ -1,0 +1,71 @@
+// Source-level definitions: add each measure separately. Not engine-validated here.
+// Required tables, relationships and disconnected selectors: powerbi/README.md.
+
+Reference Anchor =
+VAR SnapshotOK = HASONEVALUE ( 'Snapshot'[snapshot_id] )
+VAR ReportDate = SELECTEDVALUE ( 'Snapshot'[report_date] )
+VAR ManualFiltered = ISFILTERED ( 'ReferenceMonth'[MonthStart] )
+VAR ManualOne = HASONEVALUE ( 'ReferenceMonth'[MonthStart] )
+RETURN
+IF ( SnapshotOK && ( NOT ManualFiltered || ManualOne ),
+    IF ( ManualFiltered, SELECTEDVALUE ( 'ReferenceMonth'[MonthStart] ), DATE ( YEAR ( ReportDate ), MONTH ( ReportDate ), 1 ) ) )
+
+Period Start =
+VAR AnchorDate = [Reference Anchor]
+VAR Mode = SELECTEDVALUE ( 'Period'[Name] )
+RETURN IF ( NOT ISBLANK ( AnchorDate ), SWITCH ( Mode, "MTD", AnchorDate, "LFM", EOMONTH ( AnchorDate, -2 ) + 1 ) )
+
+Period End =
+VAR AnchorDate = [Reference Anchor]
+VAR CompleteDate = SELECTEDVALUE ( 'Snapshot'[complete_through] )
+VAR Mode = SELECTEDVALUE ( 'Period'[Name] )
+RETURN IF ( NOT ISBLANK ( AnchorDate ), SWITCH ( Mode, "MTD", MIN ( CompleteDate, EOMONTH ( AnchorDate, 0 ) ), "LFM", EOMONTH ( AnchorDate, -1 ) ) )
+
+Comparable Start =
+VAR StartDate = [Period Start]
+RETURN IF ( NOT ISBLANK ( StartDate ), EOMONTH ( StartDate, -2 ) + 1 )
+
+Comparable End =
+VAR StartDate = [Comparable Start]
+VAR EndDate = [Period End]
+VAR Mode = SELECTEDVALUE ( 'Period'[Name] )
+RETURN IF ( NOT ISBLANK ( StartDate ) && NOT ISBLANK ( EndDate ),
+    IF ( Mode = "LFM", EOMONTH ( StartDate, 0 ), MIN ( EOMONTH ( StartDate, 0 ), StartDate + DAY ( EndDate ) - 1 ) ) )
+
+Current Cost =
+VAR Snap = SELECTEDVALUE ( 'Snapshot'[snapshot_id] )
+VAR Curr = SELECTEDVALUE ( 'Currency'[Code] )
+VAR Basis = SELECTEDVALUE ( 'CostBasis'[Name] )
+VAR StartDate = [Period Start]
+VAR EndDate = [Period End]
+VAR ExpectedDays = IF ( NOT ISBLANK ( StartDate ) && EndDate >= StartDate, DATEDIFF ( StartDate, EndDate, DAY ) + 1 )
+VAR CoveredDays = COUNTROWS ( FILTER ( ALL ( 'Coverage' ), 'Coverage'[snapshot_id] = Snap && 'Coverage'[charge_date] >= StartDate && 'Coverage'[charge_date] <= EndDate ) )
+VAR Valid = NOT ISBLANK ( Snap ) && NOT ISBLANK ( Curr ) && Basis IN { "Billing", "Effective", "List" } && ExpectedDays > 0 && CoveredDays = ExpectedDays
+VAR Amount = CALCULATE (
+    SWITCH ( Basis, "Billing", SUM ( FactDaily[billing_cents] ), "Effective", SUM ( FactDaily[effective_cents] ), "List", SUM ( FactDaily[list_cents] ) ),
+    REMOVEFILTERS ( DimDate ),
+    FILTER ( ALL ( DimDate ), DimDate[charge_date] >= StartDate && DimDate[charge_date] <= EndDate ),
+    FactDaily[snapshot_id] = Snap, FactDaily[currency] = Curr )
+RETURN IF ( Valid, COALESCE ( Amount, 0 ) / 100 )
+
+Comparable Cost =
+VAR Snap = SELECTEDVALUE ( 'Snapshot'[snapshot_id] )
+VAR Curr = SELECTEDVALUE ( 'Currency'[Code] )
+VAR Basis = SELECTEDVALUE ( 'CostBasis'[Name] )
+VAR StartDate = [Comparable Start]
+VAR EndDate = [Comparable End]
+VAR ExpectedDays = IF ( NOT ISBLANK ( StartDate ) && EndDate >= StartDate, DATEDIFF ( StartDate, EndDate, DAY ) + 1 )
+VAR CoveredDays = COUNTROWS ( FILTER ( ALL ( 'Coverage' ), 'Coverage'[snapshot_id] = Snap && 'Coverage'[charge_date] >= StartDate && 'Coverage'[charge_date] <= EndDate ) )
+VAR Valid = NOT ISBLANK ( Snap ) && NOT ISBLANK ( Curr ) && Basis IN { "Billing", "Effective", "List" } && ExpectedDays > 0 && CoveredDays = ExpectedDays && NOT ISBLANK ( [Current Cost] )
+VAR Amount = CALCULATE (
+    SWITCH ( Basis, "Billing", SUM ( FactDaily[billing_cents] ), "Effective", SUM ( FactDaily[effective_cents] ), "List", SUM ( FactDaily[list_cents] ) ),
+    REMOVEFILTERS ( DimDate ),
+    FILTER ( ALL ( DimDate ), DimDate[charge_date] >= StartDate && DimDate[charge_date] <= EndDate ),
+    FactDaily[snapshot_id] = Snap, FactDaily[currency] = Curr )
+RETURN IF ( Valid, COALESCE ( Amount, 0 ) / 100 )
+
+Cost Variance = IF ( NOT ISBLANK ( [Current Cost] ) && NOT ISBLANK ( [Comparable Cost] ), [Current Cost] - [Comparable Cost] )
+
+Cost Variance % = DIVIDE ( [Cost Variance], [Comparable Cost] )
+
+Coverage Status = IF ( ISBLANK ( [Current Cost] ), "Unavailable - check selection and coverage", "Covered synthetic window" )
