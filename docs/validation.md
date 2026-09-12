@@ -1,5 +1,15 @@
 # Validation status
 
+## Power BI Desktop attempt — 2026-09-12: BLOCKED
+
+The installed-app inventory identified Power BI Desktop with no running window. The attempt to launch a new blank instance through Windows Computer Use was rejected with: `Computer Use was not approved to use Power BI Desktop`. No alternate launch or control mechanism was used to bypass that restriction.
+
+This is an access blocker, not an observed model or DAX failure. Power BI Desktop version could not be verified. No CSV import, model construction, measure evaluation, visual smoke, PBIX save, close or clean reopen was performed. No PBIX or application screenshot was published. The offline results below do not establish a Desktop PASS.
+
+All requested Desktop scenarios remain **NOT RUN**: separate Billing/Effective/List; MTD; LFM; delayed-snapshot month rollover; manual historical month; missing history as BLANK; covered zero activity as zero; single/no/multiple snapshot selection; resource filtering; signed credits; expected-results equality; and persistence of relationships, measures, filters, values and selected snapshot after clean reopen.
+
+Resume only after Computer Use access to Power BI Desktop is enabled. Use a new local synthetic-only report with the five committed CSVs, follow the model and M/DAX build instructions, record the actual Desktop version and per-scenario results, then save and clean reopen before updating any PASS claim. The PR remains a draft; main is unchanged.
+
 ## Executed locally on 2026-09-12
 
 Python standard-library runtime with in-memory SQLite executed the actual committed aggregation and reconciliation SQL. All **29 tests passed**. The fixture contains 476 source rows and 357 analytical rows across two synthetic snapshots. Reconciliation returned zero daily-grain discrepancies. No enterprise source was contacted.
