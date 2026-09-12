@@ -149,18 +149,18 @@ def export_demo(destination):
     data = fixture()
     db = connect(data)
     destination.mkdir(parents=True, exist_ok=True)
-    (destination / 'synthetic-input.json').write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8')
+    (destination / 'synthetic-input.json').write_text(json.dumps(data, indent=2) + '\n', encoding='utf-8', newline='\n')
     for name, query in [('FactDaily', 'SELECT * FROM fact_daily ORDER BY snapshot_id, charge_date, resource_key'),
                         ('DimResource', 'SELECT * FROM resources'), ('Snapshot', 'SELECT * FROM snapshots'),
                         ('Coverage', 'SELECT * FROM coverage')]:
         cursor = db.execute(query)
         with (destination / (name + '.csv')).open('w', newline='', encoding='utf-8') as file:
-            writer = csv.writer(file)
+            writer = csv.writer(file, lineterminator='\n')
             writer.writerow([c[0] for c in cursor.description])
             writer.writerows(cursor)
     calendar = list(days(date(2025, 1, 1), date(2025, 3, 31)))
     with (destination / 'DimDate.csv').open('w', newline='', encoding='utf-8') as file:
-        writer = csv.writer(file)
+        writer = csv.writer(file, lineterminator='\n')
         writer.writerow(['charge_date'])
         writer.writerows([[d.isoformat()] for d in calendar])
     checks = reconcile(db)
@@ -176,7 +176,7 @@ def export_demo(destination):
                    current_window=window, previous_window=previous,
                    billing_current_cents=current, billing_previous_cents=prior,
                    billing_variance_cents=current-prior)
-    (destination / 'expected-results.json').write_text(json.dumps(receipt, indent=2) + '\n', encoding='utf-8')
+    (destination / 'expected-results.json').write_text(json.dumps(receipt, indent=2) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps(receipt, indent=2))
 
 
