@@ -1,0 +1,4 @@
+resource_key,service,application,unit
+DEMO-COMPUTE,Compute,Demo Checkout,hour
+DEMO-STORAGE,Storage,Demo Archive,GB-month
+DEMO-NETWORK,Network,Unallocated,GB
