@@ -16,7 +16,7 @@ const target='FirstResourceTypeDisplay',decl='DeclaredResourceTypeDisplay',field
 const src=one(vs.filter(v=>v.visual?.visualType==='slicer'&&projections(v).length===1&&field(projections(v)[0])===decl),'Dropdown template');
 if(vs.some(v=>v.visual?.visualType==='slicer'&&projections(v).length===1&&field(projections(v)[0])===target))throw Error('Standalone type dropdown already exists');
 const hierarchy=one(vs.filter(v=>v.visual?.visualType==='slicer'&&projections(v).length>1&&projections(v).some(p=>field(p)===target)),'Provider hierarchy');
-const label=one(vs.filter(v=>runs(v).some(r=>/^declared resource type$/i.test(r.value?.trim()))),'Label');
+const label=one(vs.filter(v=>runs(v).some(r=>/^declared resource type$/i.test(String(r.value??'').trim()))),'Label');
 const bm=[];for await(const f of bookmarks.values())if(f.name.endsWith('.bookmark.json')){const text=await read(f);bm.push({p:'definition/bookmarks/'+f.name,text,b:JSON.parse(text)})}
 const infra=one(bm.filter(x=>/Infrastructure$/i.test(x.b.displayName)&&x.b.explorationState?.sections?.[pid]?.visualContainers?.[src.name]&&x.b.explorationState.sections[pid].visualContainers[src.name].singleVisual?.display?.mode!=='hidden'),'Infrastructure bookmark');
 const states=infra.b.explorationState.sections[pid].visualContainers;
