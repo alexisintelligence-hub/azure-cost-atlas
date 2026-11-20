@@ -1,0 +1,43 @@
+<!doctype html><meta charset="utf-8"><title>Resource type dropdown</title><h1>Resource type dropdown</h1><p>Close the report in Power BI Desktop. Choose the .Report folder. A JSON backup downloads before changes are written.</p><button id="apply">Choose .Report folder and apply</button> <button id="undo">Restore backup</button><pre id="status"></pre><script>
+const msg = document.getElementById('status');
+async function path(root,p,create=false){let parts=p.split('/'),name=parts.pop();for(const d of parts)root=await root.getDirectoryHandle(d,{create});return root.getFileHandle(name,{create})}
+async function read(f){return (await f.getFile()).text()}
+async function write(f,s){const w=await f.createWritable();await w.write(s);await w.close()}
+async function json(dir,name){return JSON.parse(await read(await dir.getFileHandle(name)))}
+const projections=v=>v.visual?.query?.queryState?.Values?.projections||[];
+const runs=v=>v.visual?.objects?.general?.[0]?.properties?.paragraphs?.flatMap(p=>p.textRuns)||[];
+async function plan(root){
+const def=await root.getDirectoryHandle('definition'),pages=await def.getDirectoryHandle('pages'),bookmarks=await def.getDirectoryHandle('bookmarks');
+let pg,pid;for await(const [id,d] of pages.entries())if(d.kind==='directory'&&(await json(d,'page.json')).displayName==='Analytical Explorer'){pg=d;pid=id}
+if(!pg)throw Error('Analytical Explorer page missing');
+const vd=await pg.getDirectoryHandle('visuals'),vs=[];for await(const d of vd.values())if(d.kind==='directory')vs.push(await json(d,'visual.json'));
+const one=(xs,desc)=>{if(xs.length!==1)throw Error(desc+' found '+xs.length);return xs[0]};
+const target='FirstResourceTypeDisplay',decl='DeclaredResourceTypeDisplay',field=p=>p.field?.Column?.Property;
+const src=one(vs.filter(v=>v.visual?.visualType==='slicer'&&projections(v).length===1&&field(projections(v)[0])===decl),'Dropdown template');
+if(vs.some(v=>v.visual?.visualType==='slicer'&&projections(v).length===1&&field(projections(v)[0])===target))throw Error('Standalone type dropdown already exists');
+const hierarchy=one(vs.filter(v=>v.visual?.visualType==='slicer'&&projections(v).length>1&&projections(v).some(p=>field(p)===target)),'Provider hierarchy');
+const label=one(vs.filter(v=>runs(v).some(r=>/^declared resource type$/i.test(r.value?.trim()))),'Label');
+const bm=[];for await(const f of bookmarks.values())if(f.name.endsWith('.bookmark.json')){const text=await read(f);bm.push({p:'definition/bookmarks/'+f.name,text,b:JSON.parse(text)})}
+const infra=one(bm.filter(x=>/Infrastructure$/i.test(x.b.displayName)&&x.b.explorationState?.sections?.[pid]?.visualContainers?.[src.name]&&x.b.explorationState.sections[pid].visualContainers[src.name].singleVisual?.display?.mode!=='hidden'),'Infrastructure bookmark');
+const states=infra.b.explorationState.sections[pid].visualContainers;
+const rows=vs.filter(v=>v.visual?.visualType==='slicer'&&Math.abs(v.position.x-src.position.x)<3&&states[v.name]&&states[v.name].singleVisual?.display?.mode!=='hidden').map(v=>v.position.y).sort((a,b)=>a-b);
+if(rows.length<3)throw Error('Cannot establish panel layout');
+const step=rows.at(-1)-rows.at(-2),y=rows.at(-1)+step;if(step<src.position.height||step>180)throw Error('Unexpected row spacing');
+const title='Resource type · Type',s=structuredClone(src),l=structuredClone(label),id=()=>crypto.randomUUID().replaceAll('-','').slice(0,20);
+s.name=id();l.name=id();const z=Math.max(...vs.map(v=>v.position.z||0))+1;
+Object.assign(s.position,{y,z,tabOrder:z});Object.assign(l.position,{y:y+label.position.y-src.position.y,z:z+1,tabOrder:z+1});
+const binding=structuredClone(projections(hierarchy).find(p=>field(p)===target));binding.active=true;s.visual.query.queryState.Values.projections=[binding];delete s.visual.syncGroup;
+s.filterConfig={filters:[]};for(const o of s.visual.objects.general||[]){delete o.properties.filter;delete o.properties.selfFilter}
+const titleText=s.visual.visualContainerObjects?.title?.[0]?.properties?.text?.expr?.Literal;if(titleText)titleText.Value="'"+title+"'";
+runs(l)[0].value=title;const changes=[];
+for(const v of [s,l])changes.push({p:'definition/pages/'+pid+'/visuals/'+v.name+'/visual.json',old:null,next:JSON.stringify(v)});
+for(const {p,b,text} of bm){const vc=b.explorationState?.sections?.[pid]?.visualContainers;if(!vc)continue;let touched=false;
+for(const [old,n] of [[src,s],[label,l]]){const st=vc[old.name];if(!st)continue;const cp=structuredClone(st);
+if(n===s){const sv=cp.singleVisual||{};delete sv.activeProjections;delete sv.projections;delete sv.filters;if(sv.objects?.merge){for(const g of sv.objects.merge.general||[]){delete g.properties.filter;delete g.properties.selfFilter}}}
+vc[n.name]=cp;const targets=b.options?.targetVisualNames;if(targets?.includes(old.name))targets.push(n.name);touched=true}
+if(touched)changes.push({p,old:text,next:JSON.stringify(b)})}
+return changes}
+async function restore(root,c){for(const e of c.slice().reverse()){if(e.old!==null)await write(await path(root,e.p),e.old);else{const parts=e.p.split('/');parts.pop();const id=parts.pop();let d=root;for(const n of parts)d=await d.getDirectoryHandle(n);try{const sub=await d.getDirectoryHandle(id);await sub.removeEntry('visual.json');await d.removeEntry(id)}catch(err){if(err.name!=='NotFoundError')throw err}}}}
+apply.onclick=async()=>{try{const root=await showDirectoryPicker({mode:'readwrite'});const c=await plan(root);const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(c)],{type:'application/json'}));a.download='resource-type-dropdown-backup.json';a.click();const attempted=[];try{for(const e of c){const f=await path(root,e.p,e.old===null);if(e.old!==null&&await read(f)!==e.old)throw Error('File changed since inspection');attempted.push(e);await write(f,e.next);if(await read(f)!==e.next)throw Error('Write verification failed')}}catch(err){await restore(root,attempted);throw err}msg.textContent='Applied and verified '+c.length+' files. Reopen the report.'}catch(err){msg.textContent=String(err)}};
+undo.onclick=async()=>{try{const [f]=await showOpenFilePicker();const c=JSON.parse(await read(f));const root=await showDirectoryPicker({mode:'readwrite'});for(const e of c)if(await read(await path(root,e.p))!==e.next)throw Error('Current report differs from backup');await restore(root,c);msg.textContent='Restored.'}catch(err){msg.textContent=String(err)}};
+</script>
